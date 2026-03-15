@@ -1,371 +1,341 @@
 <template>
-  <div class="min-h-screen bg-gray-50 py-12">
-    <div class="container mx-auto px-4 max-w-3xl">
-      <div class="bg-white rounded-xl shadow-lg p-8">
-        <div class="flex items-center justify-between mb-8">
-          <div>
-            <h1 class="text-4xl font-bold text-gray-800">Settings</h1>
-            <p class="text-gray-600">Manage your account settings and preferences</p>
-          </div>
-          <button
-            @click="$router.push('/profile')"
-            class="text-gray-600 hover:text-gray-800 font-medium flex items-center transition-colors"
+  <div class="min-h-screen bg-surface-50 py-12">
+    <div class="container-app max-w-4xl">
+      <!-- Header -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <div class="stagger-children">
+          <h1 class="text-fluid-h2 font-display font-black text-surface-900 mb-2">Account Settings</h1>
+          <p class="text-surface-500 font-medium leading-relaxed">Manage your personal information, security, and interface preferences.</p>
+        </div>
+        <Button variant="secondary" to="/profile" class="rounded-2xl w-fit">
+          <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+          Back to Profile
+        </Button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Sidebar Navigation -->
+        <nav class="lg:col-span-1 space-y-2">
+          <button 
+            v-for="tab in ['General', 'Security', 'Preferences', 'Notifications']" 
+            :key="tab"
+            @click="activeTab = tab"
+            :class="['w-full px-6 py-4 rounded-2xl text-sm font-bold transition-all text-left flex items-center justify-between group', activeTab === tab ? 'bg-white text-brand-600 shadow-elevation-2 border border-surface-100' : 'text-surface-500 hover:bg-white hover:text-surface-900']"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-            </svg>
-            Back to Profile
+            {{ tab }}
+            <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
           </button>
-        </div>
+        </nav>
 
-        <!-- Loading State -->
-        <div v-if="isLoading" class="flex items-center justify-center py-12">
-          <div class="text-center">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p class="mt-4 text-gray-600">Loading settings...</p>
-          </div>
-        </div>
+        <!-- Main Settings Form -->
+        <main class="lg:col-span-2">
+          <div class="bg-white rounded-[2.5rem] border border-surface-200 shadow-soft p-8 lg:p-12">
+            <!-- Loading -->
+            <div v-if="isLoading" class="py-20 text-center">
+              <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600 mx-auto mb-4"></div>
+              <p class="text-surface-500 font-bold">Synchronizing...</p>
+            </div>
 
-        <!-- Error State -->
-        <div v-else-if="error" class="bg-red-50 rounded-lg p-6">
-          <div class="flex items-center">
-            <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-            </svg>
-            <p class="ml-3 text-red-800">{{ error }}</p>
-          </div>
-        </div>
-
-        <!-- Settings Form -->
-        <form v-else @submit.prevent="saveSettings" class="space-y-8">
-          <!-- Profile Section -->
-          <div>
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Profile Information</h2>
-            <div class="space-y-4">
-              <!-- Avatar -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Profile Picture</label>
-                <div class="flex items-center space-x-6">
-                  <div class="relative">
-                    <ProfilePicture 
-                      :src="avatarPreview || user?.avatar"
-                      :alt="user?.username"
-                      size="xl"
+            <form v-else @submit.prevent="saveSettings" class="space-y-12">
+              <!-- General Section -->
+              <section v-if="activeTab === 'General'" class="animate-fade-in space-y-8">
+                <div class="flex items-center gap-6 pb-8 border-b border-surface-100">
+                  <div class="relative group">
+                    <div class="w-24 h-24 rounded-[2rem] overflow-hidden border-4 border-surface-50 shadow-soft">
+                      <img :src="avatarPreview || userAvatar" class="w-full h-full object-cover">
+                    </div>
+                    <button 
+                      type="button"
+                      @click="triggerAvatarUpload"
+                      class="absolute -bottom-2 -right-2 p-2.5 bg-brand-600 text-white rounded-xl shadow-elevation-3 hover:bg-brand-700 transition-all hover:scale-110 active:scale-95"
                     >
-                      <button 
-                        type="button"
-                        @click="triggerAvatarUpload"
-                        class="absolute bottom-0 right-0 bg-white rounded-full p-1.5 shadow-lg hover:bg-gray-100 transition-colors border border-gray-200"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
-                          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                        </svg>
-                      </button>
-                    </ProfilePicture>
+                      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 011.664.89l.812 1.22A2 2 0 0010.07 10H19a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    </button>
+                    <input ref="avatarInput" type="file" accept="image/*" class="hidden" @change="handleAvatarUpload">
                   </div>
-                  <input 
-                    ref="avatarInput"
-                    type="file"
-                    accept="image/*"
-                    class="hidden"
-                    @change="handleAvatarUpload"
-                  >
-                  <div class="text-sm text-gray-600">
-                    <p>Upload a new profile picture</p>
-                    <p class="mt-1">JPG, PNG or GIF (max. 2MB)</p>
+                  <div>
+                    <h3 class="text-lg font-display font-bold text-surface-900">Profile Image</h3>
+                    <p class="text-sm text-surface-500">JPG, PNG or GIF. Max size 2MB.</p>
                   </div>
                 </div>
-              </div>
 
-              <!-- Username -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
-                <input
-                  v-model="form.username"
-                  type="text"
-                  required
-                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                  placeholder="Your username"
+                <div class="space-y-6">
+                  <Input v-model="form.username" label="Display Name" placeholder="e.g. ChefGordon" required hasIcon>
+                    <template #icon><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg></template>
+                  </Input>
+                  <Input v-model="form.email" label="Email Address" type="email" placeholder="gordon@example.com" required hasIcon>
+                    <template #icon><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg></template>
+                  </Input>
+                  <div class="space-y-1.5">
+                    <label class="block text-sm font-bold text-surface-700">Short Bio</label>
+                    <textarea 
+                      v-model="form.bio" 
+                      rows="4" 
+                      placeholder="Tell the community about your cooking style..."
+                      class="w-full px-5 py-4 bg-surface-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-500 text-surface-900 transition-all resize-none"
+                    ></textarea>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Security Section -->
+              <section v-if="activeTab === 'Security'" class="animate-fade-in space-y-8">
+                <div class="p-6 bg-accent-50 rounded-3xl border border-accent-100 flex gap-4">
+                  <div class="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-accent-500 shadow-soft">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                  </div>
+                  <div>
+                    <h3 class="text-sm font-bold text-accent-900">Security Recommendation</h3>
+                    <p class="text-xs text-accent-700 leading-relaxed mt-1">Use at least 12 characters with a mix of letters, numbers, and symbols for a strong password.</p>
+                  </div>
+                </div>
+
+                <div class="space-y-6">
+                  <Input v-model="form.currentPassword" label="Current Password" type="password" placeholder="••••••••" hasIcon>
+                    <template #icon><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg></template>
+                  </Input>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Input v-model="form.newPassword" label="New Password" type="password" placeholder="••••••••" />
+                    <Input v-model="form.confirmPassword" label="Confirm New Password" type="password" placeholder="••••••••" />
+                  </div>
+                </div>
+              </section>
+
+              <!-- Preferences Section -->
+              <section v-if="activeTab === 'Preferences'" class="animate-fade-in space-y-10">
+                <div class="flex items-center justify-between p-6 bg-surface-50 rounded-3xl border border-surface-100">
+                  <div class="flex gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-brand-600 shadow-soft">
+                      <svg v-if="!isDarkMode" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 18v1m9-11h-1M4 11H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                      <svg v-else class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    </div>
+                    <div>
+                      <h3 class="text-sm font-bold text-surface-900">Dark Mode</h3>
+                      <p class="text-xs text-surface-500 mt-1">Switch to a darker interface for low-light environments.</p>
+                    </div>
+                  </div>
+                  <button 
+                    type="button"
+                    @click="authStore.toggleDarkMode"
+                    class="relative inline-flex h-8 w-14 items-center rounded-full transition-colors focus:outline-none ring-2 ring-offset-2 ring-transparent group"
+                    :class="isDarkMode ? 'bg-brand-600 ring-brand-500/20' : 'bg-surface-200'"
+                  >
+                    <span 
+                      class="inline-block h-6 w-6 transform rounded-full bg-white shadow-elevation-2 transition-transform duration-300 ease-smooth"
+                      :class="isDarkMode ? 'translate-x-7' : 'translate-x-1'"
+                    />
+                  </button>
+                </div>
+
+                <div class="space-y-6">
+                  <h3 class="text-xs font-black text-surface-400 uppercase tracking-widest px-1">Display Units</h3>
+                  <div class="grid grid-cols-2 gap-4">
+                    <button 
+                      v-for="unit in ['Metric (g, ml)', 'US Imperial (oz, cup)']" 
+                      :key="unit"
+                      type="button"
+                      class="px-6 py-4 rounded-2xl border-2 transition-all text-sm font-bold text-left"
+                      :class="selectedUnit === unit ? 'bg-brand-50 border-brand-600 text-brand-700' : 'bg-white border-surface-100 text-surface-500 hover:border-brand-200'"
+                      @click="selectedUnit = unit"
+                    >
+                      {{ unit }}
+                    </button>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Notifications Section -->
+              <section v-if="activeTab === 'Notifications'" class="animate-fade-in space-y-6">
+                <div 
+                  v-for="(pref, key) in notificationPrefs" 
+                  :key="key"
+                  class="flex items-center justify-between p-6 hover:bg-surface-50 rounded-3xl transition-colors group"
                 >
-              </div>
+                  <div class="flex gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-surface-100 text-surface-400 flex items-center justify-center group-hover:bg-white group-hover:text-brand-600 transition-all shadow-soft">
+                      <component :is="pref.icon" class="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 class="text-sm font-bold text-surface-900">{{ pref.title }}</h3>
+                      <p class="text-xs text-surface-500 mt-1 leading-relaxed">{{ pref.description }}</p>
+                    </div>
+                  </div>
+                  <input 
+                    type="checkbox" 
+                    v-model="form[key]" 
+                    class="w-6 h-6 rounded-lg border-2 border-surface-200 text-brand-600 focus:ring-brand-500 transition-all cursor-pointer"
+                  >
+                </div>
+              </section>
 
-              <!-- Email -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                <input
-                  v-model="form.email"
-                  type="email"
-                  required
-                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                  placeholder="Your email"
+              <!-- Save Actions -->
+              <div class="pt-10 border-t border-surface-100 flex items-center justify-end gap-4">
+                <Button 
+                  type="button" 
+                  variant="ghost" 
+                  class="rounded-xl px-6"
+                  @click="resetForm"
                 >
+                  Discard Changes
+                </Button>
+                <Button 
+                  type="submit" 
+                  variant="primary" 
+                  class="rounded-xl px-10 py-3 shadow-elevation-2"
+                  :loading="isSubmitting"
+                >
+                  Save Changes
+                </Button>
               </div>
-
-              <!-- Bio -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Bio</label>
-                <textarea
-                  v-model="form.bio"
-                  rows="3"
-                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                  placeholder="Tell us about yourself"
-                ></textarea>
-              </div>
-            </div>
+            </form>
           </div>
-
-          <!-- Password Section -->
-          <div>
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Change Password</h2>
-            <div class="space-y-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
-                <input
-                  v-model="form.currentPassword"
-                  type="password"
-                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                  placeholder="Enter your current password"
-                >
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
-                <input
-                  v-model="form.newPassword"
-                  type="password"
-                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                  placeholder="Enter new password"
-                >
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
-                <input
-                  v-model="form.confirmPassword"
-                  type="password"
-                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                  placeholder="Confirm new password"
-                >
-              </div>
-            </div>
-          </div>
-
-          <!-- Notification Settings -->
-          <div>
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Notification Settings</h2>
-            <div class="space-y-4">
-              <div class="flex items-center">
-                <input
-                  v-model="form.emailNotifications"
-                  type="checkbox"
-                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                >
-                <label class="ml-3 text-gray-700">
-                  Email notifications
-                  <p class="text-sm text-gray-500">Receive email notifications about your recipes and followers</p>
-                </label>
-              </div>
-
-              <div class="flex items-center">
-                <input
-                  v-model="form.newsletterSubscription"
-                  type="checkbox"
-                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                >
-                <label class="ml-3 text-gray-700">
-                  Newsletter subscription
-                  <p class="text-sm text-gray-500">Receive our weekly newsletter with featured recipes and cooking tips</p>
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <!-- Save Button -->
-          <div class="pt-6 border-t">
-            <button
-              type="submit"
-              class="w-full bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 focus:ring-4 focus:ring-blue-200 font-medium transition-all flex items-center justify-center"
-              :disabled="isSubmitting"
-            >
-              <svg v-if="isSubmitting" class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              <span>{{ isSubmitting ? 'Saving Changes...' : 'Save Changes' }}</span>
-            </button>
-          </div>
-        </form>
+        </main>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-import { ref, onMounted } from 'vue';
+<script setup>
+import { ref, onMounted, computed, markRaw } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
 import { useToastStore } from '@/stores/toastStore';
 import { userService } from '@/services/user';
-import ProfilePicture from '@/components/ProfilePicture.vue';
+import Button from '@/components/ui/Button.vue';
+import Input from '@/components/ui/Input.vue';
 
-const BASE_URL = 'http://localhost:5000';
-const DEFAULT_AVATAR = '/default-avatar.png'; // This should be placed in your public folder
+const authStore = useAuthStore();
+const toastStore = useToastStore();
 
-export default {
-  name: 'SettingsView',
-  components: {
-    ProfilePicture
+const activeTab = ref('General');
+const isLoading = ref(true);
+const isSubmitting = ref(false);
+const avatarInput = ref(null);
+const avatarPreview = ref(null);
+const newAvatar = ref(null);
+const selectedUnit = ref('Metric (g, ml)');
+
+const isDarkMode = computed(() => authStore.isDarkMode);
+const userAvatar = computed(() => authStore.user?.avatar || 'https://via.placeholder.com/100');
+
+const form = ref({
+  username: '',
+  email: '',
+  bio: '',
+  currentPassword: '',
+  newPassword: '',
+  confirmPassword: '',
+  emailNotifications: false,
+  newsletterSubscription: false,
+  followerAlerts: true
+});
+
+const notificationPrefs = {
+  emailNotifications: {
+    title: 'Recipe Updates',
+    description: 'Get notified when someone comments on your shared recipes.',
+    icon: markRaw({ template: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" /></svg>` })
   },
-  setup() {
-    const userStore = useUserStore();
-    const toastStore = useToastStore();
-    const avatarInput = ref(null);
-
-    const isLoading = ref(true);
-    const isSubmitting = ref(false);
-    const error = ref(null);
-    const user = ref(userStore.currentUser);
-    const avatarPreview = ref(null);
-    const newAvatar = ref(null);
-
-    const form = ref({
-      username: '',
-      email: '',
-      bio: '',
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: '',
-      emailNotifications: false,
-      newsletterSubscription: false
-    });
-
-    const triggerAvatarUpload = () => {
-      avatarInput.value.click();
-    };
-
-    const handleAvatarUpload = (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        if (file.size > 2 * 1024 * 1024) {
-          toastStore.error('Image size should be less than 2MB');
-          return;
-        }
-        newAvatar.value = file;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          avatarPreview.value = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-    };
-
-    const getAvatarUrl = (avatarPath) => {
-      if (!avatarPath) return DEFAULT_AVATAR;
-      if (avatarPath.startsWith('data:')) return avatarPath;
-      if (avatarPath.startsWith('http')) return avatarPath;
-      // Clean the path by removing any 'uploads/' prefix and leading slashes
-      const cleanPath = avatarPath.replace(/^uploads[\/\\]/, '').replace(/^[\/\\]/, '');
-      return `${BASE_URL}/uploads/${cleanPath}`;
-    };
-
-    const loadUserSettings = async () => {
-      try {
-        const settings = await userService.getUserSettings();
-        form.value = {
-          ...form.value,
-          username: settings.username,
-          email: settings.email,
-          bio: settings.bio || '',
-          emailNotifications: settings.emailNotifications || false,
-          newsletterSubscription: settings.newsletterSubscription || false
-        };
-      } catch (err) {
-        console.error('Error loading user settings:', err);
-        error.value = 'Failed to load settings';
-      } finally {
-        isLoading.value = false;
-      }
-    };
-
-    const saveSettings = async () => {
-      isSubmitting.value = true;
-      try {
-        // Validate password change
-        if (form.value.newPassword || form.value.confirmPassword || form.value.currentPassword) {
-          if (!form.value.currentPassword) {
-            throw new Error('Please enter your current password');
-          }
-          if (form.value.newPassword !== form.value.confirmPassword) {
-            throw new Error('New passwords do not match');
-          }
-          if (form.value.newPassword.length < 6) {
-            throw new Error('New password must be at least 6 characters long');
-          }
-        }
-
-        const formData = new FormData();
-        formData.append('username', form.value.username);
-        formData.append('email', form.value.email);
-        formData.append('bio', form.value.bio || '');
-        
-        // Convert settings object to JSON string
-        const settings = {
-          emailNotifications: form.value.emailNotifications,
-          newsletterSubscription: form.value.newsletterSubscription
-        };
-        formData.append('settings', JSON.stringify(settings));
-
-        // Only append avatar if a new one is selected
-        if (newAvatar.value) {
-          formData.append('avatar', newAvatar.value);
-        }
-
-        // Handle password change first if needed
-        if (form.value.newPassword) {
-          await userService.changePassword(form.value.currentPassword, form.value.newPassword);
-        }
-
-        // Update user settings
-        const updatedUser = await userService.updateUserSettings(formData);
-        
-        // Update the local user state
-        userStore.setUser({
-          ...userStore.user,
-          ...updatedUser
-        });
-        
-        // Reset password fields and avatar
-        form.value.currentPassword = '';
-        form.value.newPassword = '';
-        form.value.confirmPassword = '';
-        newAvatar.value = null;
-        avatarPreview.value = null;
-        
-        toastStore.success('Settings updated successfully');
-      } catch (err) {
-        console.error('Error saving settings:', err);
-        toastStore.error(err.response?.data?.message || err.message || 'Failed to update settings');
-      } finally {
-        isSubmitting.value = false;
-      }
-    };
-
-    onMounted(() => {
-      loadUserSettings();
-    });
-
-    return {
-      user,
-      form,
-      isLoading,
-      isSubmitting,
-      error,
-      avatarInput,
-      avatarPreview,
-      triggerAvatarUpload,
-      handleAvatarUpload,
-      saveSettings,
-      getAvatarUrl
-    };
+  newsletterSubscription: {
+    title: 'Weekly Inspiration',
+    description: 'Our hand-picked selection of the best recipes from the community.',
+    icon: markRaw({ template: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>` })
+  },
+  followerAlerts: {
+    title: 'New Followers',
+    description: 'Stay in the loop when food enthusiasts start following your kitchen.',
+    icon: markRaw({ template: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>` })
   }
 };
-</script> 
+
+const triggerAvatarUpload = () => avatarInput.value.click();
+
+const handleAvatarUpload = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    if (file.size > 2 * 1024 * 1024) {
+      toastStore.error('Image too large', 'Profile picture must be under 2MB.');
+      return;
+    }
+    newAvatar.value = file;
+    const reader = new FileReader();
+    reader.onload = (e) => avatarPreview.value = e.target.result;
+    reader.readAsDataURL(file);
+  }
+};
+
+const loadUserSettings = async () => {
+  try {
+    const settings = await userService.getUserSettings();
+    form.value = {
+      ...form.value,
+      username: settings.username,
+      email: settings.email,
+      bio: settings.bio || '',
+      emailNotifications: settings.emailNotifications || false,
+      newsletterSubscription: settings.newsletterSubscription || false
+    };
+  } catch (err) {
+    console.error('Error loading settings:', err);
+    toastStore.error('Sync Error', 'Failed to load your latest settings.');
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const saveSettings = async () => {
+  isSubmitting.value = true;
+  try {
+    const formData = new FormData();
+    formData.append('username', form.value.username);
+    formData.append('email', form.value.email);
+    formData.append('bio', form.value.bio || '');
+    formData.append('settings', JSON.stringify({
+      emailNotifications: form.value.emailNotifications,
+      newsletterSubscription: form.value.newsletterSubscription
+    }));
+
+    if (newAvatar.value) formData.append('avatar', newAvatar.value);
+
+    // Simulated API call for password if needed
+    if (form.value.newPassword) {
+      if (form.value.newPassword !== form.value.confirmPassword) {
+        throw new Error('New passwords do not match');
+      }
+      await userService.changePassword(form.value.currentPassword, form.value.newPassword);
+    }
+
+    await userService.updateUserSettings(formData);
+    toastStore.success('Success!', 'Your profile settings have been updated.');
+    
+    form.value.currentPassword = '';
+    form.value.newPassword = '';
+    form.value.confirmPassword = '';
+    newAvatar.value = null;
+    avatarPreview.value = null;
+  } catch (err) {
+    console.error(err);
+    toastStore.error('Update Failed', err.message || 'We encountered an error while saving.');
+  } finally {
+    isSubmitting.value = false;
+  }
+};
+
+const resetForm = () => {
+  loadUserSettings();
+  avatarPreview.value = null;
+  newAvatar.value = null;
+};
+
+onMounted(loadUserSettings);
+</script>
+
+<style scoped>
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>

@@ -10,10 +10,27 @@ export const useAuthStore = defineStore('auth', () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
   const initialized = ref(false)
+  const isDarkMode = ref(localStorage.getItem('theme') === 'dark')
 
   // Computed
   const isAuthenticated = computed(() => !!user.value && !!session.value)
   const userId = computed(() => user.value?.id ?? null)
+
+  // Actions
+  function toggleDarkMode() {
+    isDarkMode.value = !isDarkMode.value
+    localStorage.setItem('theme', isDarkMode.value ? 'dark' : 'light')
+    document.documentElement.classList.toggle('dark', isDarkMode.value)
+  }
+
+  // Initialize theme
+  function initializeTheme() {
+    if (isDarkMode.value) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }
 
   // Initialize auth state
   async function initialize() {
@@ -203,6 +220,7 @@ export const useAuthStore = defineStore('auth', () => {
     loading,
     error,
     initialized,
+    isDarkMode,
     
     // Computed
     isAuthenticated,
@@ -215,6 +233,8 @@ export const useAuthStore = defineStore('auth', () => {
     signOut,
     updateProfile,
     clearError,
-    onAuthStateChange
+    onAuthStateChange,
+    toggleDarkMode,
+    initializeTheme
   }
 })

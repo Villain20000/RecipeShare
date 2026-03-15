@@ -1,180 +1,130 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
-      <div>
-        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Welcome back!</h2>
-        <p class="mt-2 text-center text-sm text-gray-600">
-          Don't have an account?
-          <router-link to="/signup" class="font-medium text-blue-600 hover:text-blue-500">
-            Sign up
+  <div class="min-h-screen bg-surface-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <!-- Background Decoration -->
+    <div class="absolute top-0 left-0 w-full h-full z-0 overflow-hidden pointer-events-none">
+      <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-500/5 rounded-full blur-[120px]"></div>
+      <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-accent-500/5 rounded-full blur-[120px]"></div>
+    </div>
+
+    <div class="max-w-md w-full relative z-10">
+      <div class="bg-white rounded-[2.5rem] border border-surface-200 shadow-soft overflow-hidden">
+        <div class="px-8 pt-12 pb-8 text-center">
+          <router-link to="/" class="inline-flex items-center gap-2.5 group mb-8">
+            <div class="w-12 h-12 rounded-2xl bg-brand-600 flex items-center justify-center shadow-elevation-2 group-hover:shadow-elevation-3 transition-all duration-300">
+              <svg class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+            </div>
+            <span class="text-2xl font-display font-black tracking-tight text-surface-900">RecipeShare</span>
           </router-link>
-        </p>
+          
+          <h2 class="text-3xl font-display font-black text-surface-900 mb-2">Welcome Back</h2>
+          <p class="text-surface-500 font-medium">Log in to your account to continue your culinary journey.</p>
+        </div>
+        
+        <form class="px-8 pb-12 space-y-6" @submit.prevent="handleLogin">
+          <div class="space-y-4">
+            <Input 
+              v-model="email" 
+              label="Email Address" 
+              type="email" 
+              placeholder="you@example.com" 
+              required
+              hasIcon
+            >
+              <template #icon>
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+              </template>
+            </Input>
+
+            <div class="space-y-1">
+              <Input 
+                v-model="password" 
+                label="Password" 
+                :type="showPassword ? 'text' : 'password'" 
+                placeholder="••••••••" 
+                required
+                hasIcon
+              >
+                <template #icon>
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                </template>
+              </Input>
+              <div class="flex items-center justify-between px-1">
+                <button 
+                  type="button" 
+                  @click="showPassword = !showPassword"
+                  class="text-xs font-bold text-surface-400 hover:text-brand-600 transition-colors"
+                >
+                  {{ showPassword ? 'Hide' : 'Show' }} Password
+                </button>
+                <a href="#" class="text-xs font-bold text-brand-600 hover:text-brand-700">Forgot Password?</a>
+              </div>
+            </div>
+          </div>
+
+          <Button 
+            type="submit" 
+            variant="primary" 
+            fullWidth 
+            size="lg" 
+            class="rounded-2xl py-4 font-bold shadow-elevation-2"
+            :loading="isLoading"
+          >
+            Sign In
+          </Button>
+
+          <div class="relative py-4">
+            <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-surface-100"></div></div>
+            <div class="relative flex justify-center text-xs uppercase"><span class="bg-white px-4 text-surface-400 font-bold tracking-widest">Or continue with</span></div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <button type="button" class="flex justify-center items-center py-3 border border-surface-200 rounded-xl hover:bg-surface-50 transition-all font-bold text-sm text-surface-700">
+              <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24"><path fill="currentColor" d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/></svg>
+              Google
+            </button>
+            <button type="button" class="flex justify-center items-center py-3 border border-surface-200 rounded-xl hover:bg-surface-50 transition-all font-bold text-sm text-surface-700">
+              <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
+              Facebook
+            </button>
+          </div>
+        </form>
       </div>
       
-      <form class="mt-8 space-y-6" @submit.prevent="login">
-        <div class="space-y-4">
-          <div>
-            <label for="email" class="block text-sm font-medium text-gray-700">
-              Email address
-            </label>
-            <div class="mt-1">
-              <input
-                id="email"
-                v-model="email"
-                type="email"
-                required
-                class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                :class="{ 'border-red-300': error }"
-                placeholder="you@example.com"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label for="password" class="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <div class="mt-1">
-              <input
-                id="password"
-                v-model="password"
-                :type="showPassword ? 'text' : 'password'"
-                required
-                class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                :class="{ 'border-red-300': error }"
-                placeholder="••••••••"
-              />
-            </div>
-          </div>
-
-          <div class="flex items-center justify-between">
-            <div class="flex items-center">
-              <input
-                id="show-password"
-                v-model="showPassword"
-                type="checkbox"
-                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label for="show-password" class="ml-2 block text-sm text-gray-900">
-                Show password
-              </label>
-            </div>
-
-            <div class="text-sm">
-              <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
-                Forgot your password?
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <button
-            type="submit"
-            :disabled="isLoading"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-              <svg
-                v-if="!isLoading"
-                class="h-5 w-5 text-blue-500 group-hover:text-blue-400"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              <svg
-                v-else
-                class="animate-spin h-5 w-5 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  class="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  stroke-width="4"
-                ></circle>
-                <path
-                  class="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-            </span>
-            {{ isLoading ? 'Signing in...' : 'Sign in' }}
-          </button>
-        </div>
-
-        <!-- Error Message -->
-        <div v-if="error" class="rounded-lg bg-red-50 p-4">
-          <div class="flex">
-            <div class="flex-shrink-0">
-              <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-              </svg>
-            </div>
-            <div class="ml-3">
-              <p class="text-sm font-medium text-red-800">
-                {{ error }}
-              </p>
-            </div>
-          </div>
-        </div>
-      </form>
+      <p class="mt-8 text-center text-sm font-medium text-surface-500">
+        New to RecipeShare?
+        <router-link to="/signup" class="text-brand-600 font-bold hover:text-brand-700 underline-offset-4 hover:underline transition-all">
+          Create an account
+        </router-link>
+      </p>
     </div>
   </div>
 </template>
 
-<script>
-import { useAuthStore } from '@/stores/authStore';
+<script setup>
 import { ref, computed } from 'vue';
+import { useAuthStore } from '@/stores/authStore';
 import { useRouter, useRoute } from 'vue-router';
+import Input from '@/components/ui/Input.vue';
+import Button from '@/components/ui/Button.vue';
 
-export default {
-  name: 'LoginView',
-  setup() {
-    const userStore = useUserStore();
-    const router = useRouter();
-    const route = useRoute();
+const authStore = useAuthStore();
+const router = useRouter();
+const route = useRoute();
 
-    const email = ref('');
-    const password = ref('');
-    const showPassword = ref(false);
-    const error = computed(() => userStore.error);
-    const isLoading = computed(() => userStore.loading);
+const email = ref('');
+const password = ref('');
+const showPassword = ref(false);
+const isLoading = computed(() => authStore.loading);
 
-    const login = async () => {
-      try {
-        await userStore.login(email.value, password.value);
-        const redirectPath = route.query.redirect || '/';
-        router.push(redirectPath);
-      } catch (err) {
-        // Error is handled by the store
-      }
-    };
-
-    return {
-      email,
-      password,
-      showPassword,
-      error,
-      isLoading,
-      login
-    };
+const handleLogin = async () => {
+  try {
+    await authStore.signIn({ email: email.value, password: password.value });
+    const redirectPath = route.query.redirect || '/';
+    router.push(redirectPath);
+  } catch (err) {
+    // Error is handled by store and displayed via toast or field
   }
 };
 </script>
-
-<style scoped>
-/* Add styles for LoginView */
-</style>

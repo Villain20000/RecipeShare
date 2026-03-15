@@ -241,10 +241,10 @@ export default {
   setup() {
     const router = useRouter();
     const toastStore = useToastStore();
-    const userStore = useUserStore();
+    const authStore = useAuthStore();
     const imagePreview = ref(null);
 
-    return { router, toastStore, userStore, imagePreview };
+    return { router, toastStore, authStore, imagePreview };
   },
   data() {
     return {
@@ -337,7 +337,7 @@ export default {
     },
 
     async submitRecipe() {
-      if (!this.userStore.isAuthenticated) {
+      if (!this.authStore.isAuthenticated) {
         console.log('User not authenticated');
         this.toastStore.error('Please log in to share a recipe');
         this.router.push('/login');
@@ -348,8 +348,8 @@ export default {
       try {
         console.log('Starting recipe submission...', {
           userInfo: {
-            isAuthenticated: this.userStore.isAuthenticated,
-            userId: this.userStore.currentUser?._id
+            isAuthenticated: this.authStore.isAuthenticated,
+            userId: this.authStore.user?._id
           }
         });
         
@@ -396,8 +396,8 @@ export default {
             headers: error.response?.headers
           },
           user: {
-            isAuthenticated: this.userStore.isAuthenticated,
-            userId: this.userStore.currentUser?._id
+            isAuthenticated: this.authStore.isAuthenticated,
+            userId: this.authStore.user?._id
           }
         });
         

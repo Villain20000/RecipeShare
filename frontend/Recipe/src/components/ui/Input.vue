@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 
 interface Props {
-  modelValue: string | number
+  modelValue: string | number | null
   type?: string
   label?: string
   placeholder?: string
@@ -15,12 +15,14 @@ interface Props {
   autocomplete?: string
   min?: string | number
   max?: string | number
+  hasIcon?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   type: 'text',
   disabled: false,
-  required: false
+  required: false,
+  hasIcon: false
 })
 
 const emit = defineEmits<{
@@ -38,17 +40,24 @@ function handleInput(event: Event) {
 </script>
 
 <template>
-  <div class="space-y-1.5">
+  <div class="space-y-1.5 w-full group">
     <label
       v-if="label"
       :for="inputId"
-      class="block text-sm font-medium text-gray-700"
+      class="block text-sm font-bold text-surface-700 transition-colors group-focus-within:text-brand-600"
     >
       {{ label }}
-      <span v-if="required" class="text-red-500">*</span>
+      <span v-if="required" class="text-accent-500 ml-0.5">*</span>
     </label>
     
-    <div class="relative">
+    <div class="relative flex items-center">
+      <div 
+        v-if="hasIcon" 
+        class="absolute left-4 text-surface-400 pointer-events-none transition-colors group-focus-within:text-brand-500"
+      >
+        <slot name="icon"></slot>
+      </div>
+      
       <input
         :id="inputId"
         :type="type"
@@ -65,28 +74,42 @@ function handleInput(event: Event) {
         @focus="emit('focus', $event)"
         :class="[
           'input',
-          error ? 'input-error' : '',
+          hasIcon ? 'pl-11' : '',
+          error ? 'input-error ring-1 ring-red-500/20' : '',
+          'hover:border-surface-300 focus:shadow-elevation-1',
           $attrs.class
         ]"
         :aria-invalid="!!error"
         :aria-describedby="error ? `${inputId}-error` : hint ? `${inputId}-hint` : undefined"
       />
+      
+      <div v-if="error" class="absolute right-4 text-red-500 pointer-events-none animate-shake">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
     </div>
     
-    <p
-      v-if="error"
-      :id="`${inputId}-error`"
-      class="text-sm text-red-600"
-      role="alert"
+    <transition
+      enter-active-class="transition duration-200 ease-out"
+      enter-from-class="transform -translate-y-1 opacity-0"
+      enter-to-class="transform translate-y-0 opacity-100"
     >
-      {{ error }}
-    </p>
-    <p
-      v-else-if="hint"
-      :id="`${inputId}-hint`"
-      class="text-sm text-gray-500"
-    >
-      {{ hint }}
-    </p>
+      <p
+        v-if="error"
+        :id="`${inputId}-error`"
+        class="text-xs font-medium text-red-500 flex items-center gap-1.5 px-1"
+        role="alert"
+      >
+        {{ error }}
+      </p>
+      <p
+        v-else-if="hint"
+        :id="`${inputId}-hint`"
+        class="text-xs text-surface-500 px-1"
+      >
+        {{ hint }}
+      </p>
+    </transition>
   </div>
 </template>

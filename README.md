@@ -1,54 +1,69 @@
-# Recipe Sharing App
+# RecipeShare 🍳
 
-A full-stack web application for sharing and discovering recipes.
+Elevate your culinary journey with RecipeShare, a modern, high-end full-stack web application designed for food enthusiasts to discover, share, and organize their favorite recipes in one beautiful place.
 
-## Features
+## ✨ 2024 Modernization Update
 
-- User authentication (signup/login)
-- Create, read, update, and delete recipes
-- Bookmark favorite recipes
-- Search recipes by title or ingredients
-- Filter recipes by category
-- Responsive design for all devices
+The platform has undergone a complete UI/UX overhaul to meet 2024-2025 design standards, focusing on high-impact visuals, seamless micro-interactions, and a robust architectural foundation.
 
-## Tech Stack
+### 🎨 Visual & UI Enhancements
+- **Modern Design System**: A unified design language using a bespoke brand palette (`brand-600` emerald) and sophisticated `surface` neutrals.
+- **Glassmorphism**: Sophisticated use of backdrop blurs and semi-transparent layers for a deep, modern aesthetic.
+- **Fluid Typography**: Responsive font scaling using `clamp()` for perfect readability across all screen sizes.
+- **Dark Mode**: Native dark theme support with local persistence and automatic system preference detection.
+- **Elevation System**: A custom shadow system for depth and hierarchy.
 
-- Frontend: Vue.js 3 with Tailwind CSS
-- Backend: Node.js with Express
-- Database: MongoDB
-- Authentication: JWT
+### 🚀 UX & Performance
+- **Skeleton Loading**: Replaced generic spinners with high-fidelity skeleton screens for a perceived performance boost.
+- **Micro-interactions**: Refined hover effects, scale transitions, and spring-based animations.
+- **Unified Layout**: Consolidated architectural layout using `AppLayout` and modernized navigation.
+- **Global Search**: A rapid-access command-style search overlay accessible from anywhere.
 
-## Setup Instructions
+## 🛠 Features
+
+- **Authentication**: Secure signup/login with modern form validation and feedback.
+- **Recipe Management**: Create, edit, and publish recipes with a rich, distraction-free interface.
+- **Smart Discovery**: Explore recipes with multi-criteria filtering (category, difficulty, keywords).
+- **Social Integration**: Review and rate recipes, follow chefs, and save favorites.
+- **User Profiles**: Beautifully crafted chef profiles showcasing published works and favorites.
+- **Responsive Design**: Mobile-first approach ensuring a premium experience on everything from smartphones to ultrawide monitors.
+
+## 💻 Tech Stack
+
+- **Frontend**: 
+  - [Vue.js 3](https://vuejs.org/) (Composition API & Script Setup)
+  - [Pinia](https://pinia.vuejs.org/) (State Management)
+  - [Tailwind CSS](https://tailwindcss.com/) (Styling)
+  - [Vite](https://vitejs.dev/) (Build Tool)
+- **Backend**: [Node.js](https://nodejs.org/) with [Express](https://expressjs.com/)
+- **Database**: [MongoDB](https://www.mongodb.com/)
+- **Authentication**: JWT & Supabase integration foundation.
+
+## 🚀 Setup Instructions
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
-- MongoDB installed and running locally
-- npm or yarn package manager
+- Node.js (v18 or higher)
+- MongoDB installed or a connection string
+- npm or yarn
 
 ### Backend Setup
 
 1. Navigate to the backend directory:
-
    ```bash
    cd backend
    ```
-
 2. Install dependencies:
-
    ```bash
    npm install
    ```
-
-3. Create a .env file with the following variables:
-
+3. Create a `.env` file:
    ```
-   MONGODB_URI=mongodb://localhost:27017/recipe_sharing
+   MONGODB_URI=your_mongodb_uri
    PORT=5000
-   JWT_SECRET=your_jwt_secret_key_here
+   JWT_SECRET=your_secure_secret
    ```
-
-4. Start the backend server:
+4. Start the server:
    ```bash
    npm run dev
    ```
@@ -56,41 +71,31 @@ A full-stack web application for sharing and discovering recipes.
 ### Frontend Setup
 
 1. Navigate to the frontend directory:
-
    ```bash
    cd frontend/Recipe
    ```
-
 2. Install dependencies:
-
    ```bash
    npm install
    ```
-
 3. Start the development server:
-
    ```bash
    npm run dev
    ```
-
 4. Open your browser and visit `http://localhost:5173`
 
-## API Endpoints
+## 📬 API Endpoints
 
 ### Recipes
-
-- GET /api/recipes - Get all recipes
-- GET /api/recipes/:id - Get a specific recipe
-- POST /api/recipes - Create a new recipe (requires authentication)
-- PUT /api/recipes/:id - Update a recipe (requires authentication)
-- DELETE /api/recipes/:id - Delete a recipe (requires authentication)
-- POST /api/recipes/:id/bookmark - Toggle recipe bookmark (requires authentication)
+- `GET /api/recipes` - Discover all recipes
+- `GET /api/recipes/:id` - Detailed recipe view
+- `POST /api/recipes` - Publish new masterpiece (Auth)
+- `PUT /api/recipes/:id` - Refine your creation (Auth)
+- `DELETE /api/recipes/:id` - Remove recipe (Auth)
 
 ### Users
+- `POST /api/users/signup` - Create chef account
+- `POST /api/users/login` - Authenticate
 
-- POST /api/users/signup - Create a new user account
-- POST /api/users/login - Login to existing account
-
-## Contributing
-
-Feel free to submit issues and enhancement requests!
+---
+Developed with ❤️ by the RecipeShare Team.

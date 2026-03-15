@@ -6,8 +6,12 @@ module.exports = {
   ],
   theme: {
     extend: {
+      screens: {
+        'xs': '480px',
+        '3xl': '1920px',
+      },
       colors: {
-        primary: {
+        brand: {
           50: '#f0f9f4',
           100: '#dcf0e4',
           200: '#bbe0cc',
@@ -45,10 +49,30 @@ module.exports = {
           800: '#262626',
           900: '#171717',
         },
+        // Legacy alias for backward compatibility
+        primary: {
+          50: '#f0f9f4',
+          100: '#dcf0e4',
+          200: '#bbe0cc',
+          300: '#8fc7a8',
+          400: '#5da87a',
+          500: '#3d8c5c',
+          600: '#317048',
+          700: '#29593c',
+          800: '#234733',
+          900: '#1d3a2b',
+          950: '#0d2118',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
         display: ['Poppins', 'Inter', 'system-ui', 'sans-serif'],
+      },
+      fontSize: {
+        'fluid-h1': 'clamp(2rem, 5vw, 3.5rem)',
+        'fluid-h2': 'clamp(1.5rem, 4vw, 2.5rem)',
+        'fluid-h3': 'clamp(1.25rem, 3vw, 2rem)',
+        'fluid-body': 'clamp(1rem, 2vw, 1.125rem)',
       },
       boxShadow: {
         'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
@@ -63,6 +87,20 @@ module.exports = {
       spacing: {
         '18': '4.5rem',
         '22': '5.5rem',
+        '88': '22rem',
+        '128': '32rem',
+      },
+      boxShadow: {
+        'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
+        'card': '0 0 0 1px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.08)',
+        'card-hover': '0 0 0 1px rgba(0, 0, 0, 0.05), 0 8px 24px rgba(0, 0, 0, 0.12)',
+        'inner-soft': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+        // Elevation system
+        'elevation-1': '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08)',
+        'elevation-2': '0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06)',
+        'elevation-3': '0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05)',
+        'elevation-4': '0 20px 25px rgba(0,0,0,0.1), 0 10px 10px rgba(0,0,0,0.04)',
+        'elevation-5': '0 25px 50px rgba(0,0,0,0.25)',
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-out',
