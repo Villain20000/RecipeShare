@@ -191,7 +191,7 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { useUserStore } from '@/stores/userStore';
+import { useAuthStore } from '@/stores/authStore';
 import { recipeService } from '@/services/recipe';
 import { useToastStore } from '@/stores/toastStore';
 import { userService } from '@/services/user';

@@ -394,7 +394,7 @@
 
 <script>
 import { recipeService } from '@/services/recipe';
-import { useUserStore } from '@/stores/userStore';
+import { useAuthStore } from '@/stores/authStore';
 import { storeToRefs } from 'pinia';
 
 export default {

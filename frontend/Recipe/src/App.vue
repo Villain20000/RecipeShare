@@ -4,7 +4,7 @@ console.log('Header component loaded');
 import AppLayout from '@/components/AppLayout.vue';
 import ToastNotification from '@/components/ToastNotification.vue';
 import AppFooter from '@/components/AppFooter.vue';
-import { useUserStore } from '@/stores/userStore';
+import { useAuthStore } from '@/stores/authStore';
 import { onMounted, ref, computed, watch } from 'vue';
 import { useToastStore } from '@/stores/toastStore';
 import { useRouter } from 'vue-router';
@@ -23,7 +23,7 @@ export default {
     AppFooter
   },
   setup() {
-    const userStore = useUserStore();
+    const authStore = useAuthStore();
     const toastStore = useToastStore();
     const router = useRouter();
     const toasts = ref([]);
@@ -42,8 +42,8 @@ export default {
     };
 
     const userAvatar = computed(() => {
-      if (!userStore.user) return DEFAULT_AVATAR;
-      return getAvatarUrl(userStore.user.avatar);
+      if (!authStore.user) return DEFAULT_AVATAR;
+      return getAvatarUrl(authStore.user.avatar);
     });
 
     // Watch for user changes to update the avatar

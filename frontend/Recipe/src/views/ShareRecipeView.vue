@@ -234,7 +234,7 @@ import { ref } from 'vue';
 import { recipeService } from '@/services/recipe';
 import { useToastStore } from '@/stores/toastStore';
 import { useRouter } from 'vue-router';
-import { useUserStore } from '@/stores/userStore';
+import { useAuthStore } from '@/stores/authStore';
 
 export default {
   name: 'ShareRecipeView',

@@ -381,7 +381,7 @@
 </template>
 
 <script>
-import { useUserStore } from '@/stores/userStore';
+import { useAuthStore } from '@/stores/authStore';
 import { computed } from 'vue';
 
 export default {

@@ -221,7 +221,7 @@
 
 <script>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useUserStore } from '@/stores/userStore';
+import { useAuthStore } from '@/stores/authStore';
 import { useRouter } from 'vue-router';
 import ProfilePicture from './ProfilePicture.vue';
 

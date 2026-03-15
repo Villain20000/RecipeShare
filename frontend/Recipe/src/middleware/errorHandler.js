@@ -1,17 +1,17 @@
 import axios from 'axios';
 import { authService } from '@/services/auth';
-import { useUserStore } from '@/stores/userStore';
+import { useAuthStore } from '@/stores/authStore';
 
 export function setupErrorHandler(router) {
   axios.interceptors.response.use(
     response => response,
     error => {
-      const userStore = useUserStore();
+      const authStore = useAuthStore();
 
       // Handle 401 Unauthorized errors
       if (error.response?.status === 401) {
         // Clear user data and redirect to login
-        userStore.logout();
+        authStore.signOut();
         router.push({
           path: '/login',
           query: { redirect: router.currentRoute.value.fullPath }

@@ -294,7 +294,7 @@
 <script>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { useUserStore } from '@/stores/userStore';
+import { useAuthStore } from '@/stores/authStore';
 import { useToastStore } from '@/stores/toastStore';
 import { recipeService } from '@/services/recipe';
 import ProfilePicture from '@/components/ProfilePicture.vue';

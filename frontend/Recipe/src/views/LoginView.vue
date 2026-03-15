@@ -136,7 +136,7 @@
 </template>
 
 <script>
-import { useUserStore } from '@/stores/userStore';
+import { useAuthStore } from '@/stores/authStore';
 import { ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 
