@@ -1,118 +1,103 @@
-# RecipeShare
+# RecipeShare 🍳
 
-A modern, minimal recipe sharing application built with Vue 3, TypeScript, Supabase, and Tailwind CSS.
+Elevate your culinary journey with RecipeShare, a modern, high-end full-stack web application designed for food enthusiasts to discover, share, and organize their favorite recipes in one beautiful place.
 
-## Features
+## ✨ 2024 Modernization Update
 
-- 🔐 **Authentication** - Secure user authentication with Supabase
-- 📝 **Recipe Management** - Create, edit, and delete recipes
-- 🔖 **Bookmarks** - Save favorite recipes
-- 🔍 **Search & Filter** - Find recipes by category, difficulty, or search query
-- 📱 **Responsive Design** - Works on all devices
-- ✨ **Modern UI** - Clean, minimal design with smooth animations
+The platform has undergone a complete UI/UX overhaul to meet 2024-2025 design standards, focusing on high-impact visuals, seamless micro-interactions, and a robust architectural foundation.
 
-## Tech Stack
+### 🎨 Visual & UI Enhancements
+- **Modern Design System**: A unified design language using a bespoke brand palette (`brand-600` emerald) and sophisticated `surface` neutrals.
+- **Glassmorphism**: Sophisticated use of backdrop blurs and semi-transparent layers for a deep, modern aesthetic.
+- **Fluid Typography**: Responsive font scaling using `clamp()` for perfect readability across all screen sizes.
+- **Dark Mode**: Native dark theme support with local persistence and automatic system preference detection.
+- **Elevation System**: A custom shadow system for depth and hierarchy.
 
-- **Frontend**: Vue 3 + TypeScript + Vite
-- **Styling**: Tailwind CSS
-- **State Management**: Pinia
-- **Database**: Supabase (PostgreSQL)
-- **Authentication**: Supabase Auth
-- **Real-time**: Supabase Realtime
+### 🚀 UX & Performance
+- **Skeleton Loading**: Replaced generic spinners with high-fidelity skeleton screens for a perceived performance boost.
+- **Micro-interactions**: Refined hover effects, scale transitions, and spring-based animations.
+- **Unified Layout**: Consolidated architectural layout using `AppLayout` and modernized navigation.
+- **Global Search**: A rapid-access command-style search overlay accessible from anywhere.
+- **State-Driven Theme**: Robust theme initialization and persistence managed via Pinia.
 
-## Prerequisites
+## 🛠 Features
 
-- Node.js 18+
+- **Authentication**: Secure signup/login with modern form validation, custom input components, and persistent session handling.
+- **Recipe Management**: Create, edit, and publish recipes with a rich, distraction-free interface and real-time image previews.
+- **Smart Discovery**: Explore recipes with multi-criteria filtering (category, difficulty, keywords) and a modern hero slider.
+- **Social Integration**: Review and rate recipes, follow chefs, and save favorites.
+- **User Profiles**: Beautifully crafted chef profiles showcasing published works and favorites with a tabbed interface.
+- **Settings & Preferences**: Comprehensive settings for profile management, security, and interface preferences (Dark Mode, Units).
+- **Responsive Design**: Mobile-first approach ensuring a premium experience on everything from smartphones to ultrawide monitors.
+
+## 💻 Tech Stack
+
+- **Frontend**: 
+  - [Vue.js 3](https://vuejs.org/) (Composition API & Script Setup)
+  - [Pinia](https://pinia.vuejs.org/) (State Management)
+  - [Tailwind CSS](https://tailwindcss.com/) (Styling)
+  - [Vite](https://vitejs.dev/) (Build Tool)
+- **Backend**: [Node.js](https://nodejs.org/) with [Express](https://expressjs.com/)
+- **Database**: [MongoDB](https://www.mongodb.com/)
+- **Authentication**: JWT & Supabase integration foundation.
+
+## 🚀 Setup Instructions
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- MongoDB installed or a connection string
 - npm or yarn
-- Supabase account (free tier works)
 
-## Getting Started
+### Backend Setup
 
-### 1. Clone and Install Dependencies
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Create a `.env` file:
+   ```
+   MONGODB_URI=your_mongodb_uri
+   PORT=5000
+   JWT_SECRET=your_secure_secret
+   ```
+4. Start the server:
+   ```bash
+   npm run dev
+   ```
 
-```bash
-cd frontend/Recipe
-npm install
-```
+### Frontend Setup
 
-### 2. Set Up Supabase
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend/Recipe
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+4. Open your browser and visit `http://localhost:5173`
 
-1. Create a new project at [supabase.com](https://supabase.com)
-2. Go to the SQL Editor in your Supabase dashboard
-3. Copy and run the contents of `supabase-schema.sql`
-4. Go to Settings → API to find your project URL and anon key
+## 📬 API Endpoints
 
-### 3. Configure Environment Variables
+### Recipes
+- `GET /api/recipes` - Discover all recipes
+- `GET /api/recipes/:id` - Detailed recipe view
+- `POST /api/recipes` - Publish new masterpiece (Auth)
+- `PUT /api/recipes/:id` - Refine your creation (Auth)
+- `DELETE /api/recipes/:id` - Remove recipe (Auth)
 
-```bash
-# Copy the example env file
-cp .env.example .env
+### Users
+- `POST /api/users/signup` - Create chef account
+- `POST /api/users/login` - Authenticate
 
-# Edit .env and add your Supabase credentials:
-# VITE_SUPABASE_URL=your-project-url
-# VITE_SUPABASE_ANON_KEY=your-anon-key
-```
-
-### 4. Run Development Server
-
-```bash
-npm run dev
-```
-
-The app will be available at `http://localhost:5173`
-
-### 5. Build for Production
-
-```bash
-npm run build
-```
-
-## Project Structure
-
-```
-src/
-├── assets/           # Static assets and styles
-├── components/       # Vue components
-│   └── ui/          # Reusable UI components
-├── lib/             # Third-party library configuration
-│   └── supabase.ts  # Supabase client
-├── middleware/      # Vue middleware
-├── router/          # Vue Router configuration
-├── services/        # API service functions
-├── stores/          # Pinia stores
-│   ├── authStore.ts
-│   ├── recipeStore.ts
-│   └── toastStore.ts
-├── types/           # TypeScript type definitions
-├── utils/           # Utility functions
-└── views/           # Page components
-```
-
-## Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Lint and fix code
-- `npm run format` - Format code with Prettier
-
-## Supabase Database Schema
-
-The database schema is defined in `supabase-schema.sql` and includes:
-
-- **profiles** - User profiles linked to auth.users
-- **recipes** - Recipe data with RLS policies
-- **bookmarks** - User recipe bookmarks
-
-## Design System
-
-The app uses a custom Tailwind CSS design system with:
-
-- Custom color palette (primary, accent, surface)
-- Custom shadows for cards and hover states
-- Custom animations (fade-in, slide-up, scale-in)
-- Accessible focus states
-
-## License
-
-MIT
+---
+Developed with ❤️ by the RecipeShare Team.
