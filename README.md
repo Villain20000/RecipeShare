@@ -18,14 +18,16 @@ The platform has undergone a complete UI/UX overhaul to meet 2024-2025 design st
 - **Micro-interactions**: Refined hover effects, scale transitions, and spring-based animations.
 - **Unified Layout**: Consolidated architectural layout using `AppLayout` and modernized navigation.
 - **Global Search**: A rapid-access command-style search overlay accessible from anywhere.
+- **State-Driven Theme**: Robust theme initialization and persistence managed via Pinia.
 
 ## 🛠 Features
 
-- **Authentication**: Secure signup/login with modern form validation and feedback.
-- **Recipe Management**: Create, edit, and publish recipes with a rich, distraction-free interface.
-- **Smart Discovery**: Explore recipes with multi-criteria filtering (category, difficulty, keywords).
+- **Authentication**: Secure signup/login with modern form validation, custom input components, and persistent session handling.
+- **Recipe Management**: Create, edit, and publish recipes with a rich, distraction-free interface and real-time image previews.
+- **Smart Discovery**: Explore recipes with multi-criteria filtering (category, difficulty, keywords) and a modern hero slider.
 - **Social Integration**: Review and rate recipes, follow chefs, and save favorites.
-- **User Profiles**: Beautifully crafted chef profiles showcasing published works and favorites.
+- **User Profiles**: Beautifully crafted chef profiles showcasing published works and favorites with a tabbed interface.
+- **Settings & Preferences**: Comprehensive settings for profile management, security, and interface preferences (Dark Mode, Units).
 - **Responsive Design**: Mobile-first approach ensuring a premium experience on everything from smartphones to ultrawide monitors.
 
 ## 💻 Tech Stack
